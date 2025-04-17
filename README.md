@@ -296,4 +296,4 @@ python app/kafka_consumer.py
 - Compliance: Transaction rollback for transfers, audit logging, and mocked Azure Sentinel integration.
 - Performance: Database indexing, table partitioning, and load testing with Locust.
 - Monitoring: ELK Stack for logs, Prometheus/Grafana for metrics, Kibana for transaction analytics.
-- CI/CD**: Azure DevOps pipeline with Docker, Newman tests, and deployment to Azure Web App.
+- CI/CD: Azure DevOps pipeline with Docker, Newman tests, and deployment to Azure Web App.
