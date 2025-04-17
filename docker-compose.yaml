@@ -1,0 +1,104 @@
+version: '3.8'
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    environment:
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - AZURE_AD_TENANT_ID=${AZURE_AD_TENANT_ID}
+      - AZURE_AD_CLIENT_ID=${AZURE_AD_CLIENT_ID}
+      - KEY_VAULT_URL=${KEY_VAULT_URL}
+      - SENTINEL_ENDPOINT=${SENTINEL_ENDPOINT}
+      - SENTINEL_TOKEN=${SENTINEL_TOKEN}
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: banking_db
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  redis:
+    image: redis:6
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+  kafka:
+    image: confluentinc/cp-kafka:7.0.1
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "kafka-topics", "--list", "--bootstrap-server", "kafka:9092"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.0.1
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    healthcheck:
+      test: ["CMD", "echo", "ruok", "|", "nc", "-z", "localhost", "2181"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+  elasticsearch:
+    image: elasticsearch:7.14.0
+    environment:
+      - discovery.type=single-node
+    ports:
+      - "9200:9200"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9200"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  logstash:
+    image: logstash:7.14.0
+    volumes:
+      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    ports:
+      - "5044:5044"
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9600"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  kibana:
+    image: kibana:7.14.0
+    ports:
+      - "5601:5601"
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5601"]
+      interval: 10s
+      timeout: 5s
+      retries: 5

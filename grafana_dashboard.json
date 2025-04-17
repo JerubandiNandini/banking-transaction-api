@@ -1,0 +1,18 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "Banking API Metrics",
+    "panels": [
+      {
+        "type": "graph",
+        "title": "Transaction Rate",
+        "targets": [
+          {
+            "expr": "rate(transactions_total[5m])",
+            "legendFormat": "{{type}}"
+          }
+        ]
+      }
+    ]
+  }
+}

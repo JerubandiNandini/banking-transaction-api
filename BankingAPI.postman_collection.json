@@ -1,0 +1,53 @@
+{
+  "info": {
+    "name": "BankingAPI",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create Account",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/accounts",
+          "host": ["{{base_url}}"],
+          "path": ["accounts"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create Transaction",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{customer_token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"amount\": 100.0, \"transaction_type\": \"deposit\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/transactions",
+          "host": ["{{base_url}}"],
+          "path": ["transactions"]
+        }
+      },
+      "response": []
+    }
+  ]
+}

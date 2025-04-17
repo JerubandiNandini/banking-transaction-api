@@ -1,0 +1,2 @@
+{"type":"dashboard","id":"banking-transactions","attributes":{"title":"Banking Transactions","panelsJSON":"[{\"type\":\"visualization\",\"id\":\"trans-count\",\"panelIndex\":1}]"}}
+{"type":"visualization","id":"trans-count","attributes":{"title":"Transaction Count","visState":"{\"type\":\"histogram\",\"params\":{\"field\":\"amount\"}}"}}
